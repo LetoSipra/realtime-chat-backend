@@ -7,13 +7,14 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 import cors from "cors";
-import { typeDefs, resolvers } from "./schema.js";
+import { typeDefs, resolvers } from "./graphql/schema.js";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import Redis from "ioredis";
 import { prisma } from "./prisma/prisma.js";
+import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 
 // Configure Redis
-const redisOptions = { host: "127.0.0.1", port: 6379 };
+const redisOptions = `${process.env.REDIS_URL}`;
 export const pubsub = new RedisPubSub({
   publisher: new Redis(redisOptions),
   subscriber: new Redis(redisOptions),
@@ -61,6 +62,12 @@ const server = new ApolloServer({
         };
       },
     },
+    ApolloServerPluginLandingPageLocalDefault({
+      footer: false,
+      embed: {
+        endpointIsEditable: true,
+      },
+    }),
   ],
 });
 

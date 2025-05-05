@@ -7,7 +7,7 @@ interface GraphQLContext {
 }
 
 interface Message {
-  id: string;
+  userId: string;
   username: string;
   userImg?: string;
   text: string;

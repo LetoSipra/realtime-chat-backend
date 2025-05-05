@@ -1,9 +1,9 @@
 import gql from "graphql-tag";
-import { GraphQLContext, Message } from "./types/typing";
+import { GraphQLContext, Message } from "../types/typing";
 
 export const typeDefs = gql`
   type Message {
-    id: String!
+    userId: String!
     username: String!
     userImg: String
     text: String!
@@ -16,10 +16,10 @@ export const typeDefs = gql`
 
   type Mutation {
     sendMessage(
+      userId: String!
       username: String!
       userImg: String
       text: String!
-      id: String!
       timestamp: String!
     ): Message!
   }
@@ -28,8 +28,6 @@ export const typeDefs = gql`
     messageSent: Message!
   }
 `;
-
-const MESSAGE_SENT = "MESSAGE_SENT";
 
 export const resolvers = {
   Query: {
@@ -49,7 +47,7 @@ export const resolvers = {
     sendMessage: async (_: Event, args: Message, context: GraphQLContext) => {
       const { prisma, pubsub } = context;
       const message = await prisma.message.create({ data: args });
-      await pubsub.publish(MESSAGE_SENT, { messageSent: message });
+      await pubsub.publish("MESSAGE_SENT", { messageSent: message });
       return message;
     },
   },
@@ -57,7 +55,7 @@ export const resolvers = {
   Subscription: {
     messageSent: {
       subscribe: (_: Event, __: Event, { pubsub }: GraphQLContext) =>
-        pubsub.asyncIterator([MESSAGE_SENT]),
+        pubsub.asyncIterator(["MESSAGE_SENT"]),
     },
   },
 };

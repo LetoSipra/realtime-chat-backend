@@ -14,7 +14,8 @@ datasource db {
 }
 
 model Message {
-  id        String   @id
+  id        Int      @id @default(autoincrement())
+  userId    String
   username  String
   userImg   String?
   text      String
