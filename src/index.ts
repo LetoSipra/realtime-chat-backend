@@ -11,7 +11,6 @@ import { typeDefs, resolvers } from "./graphql/schema.js";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import Redis from "ioredis";
 import { prisma } from "./prisma/prisma.js";
-import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 
 // Configure Redis
 const redisOptions = `${process.env.REDIS_URL}`;
@@ -62,12 +61,6 @@ const server = new ApolloServer({
         };
       },
     },
-    ApolloServerPluginLandingPageLocalDefault({
-      footer: false,
-      embed: {
-        endpointIsEditable: true,
-      },
-    }),
   ],
 });
 
