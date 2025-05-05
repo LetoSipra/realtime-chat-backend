@@ -31,10 +31,10 @@ export const typeDefs = gql`
 
 const MESSAGE_SENT = "MESSAGE_SENT";
 
-export const resolvers: any = {
+export const resolvers = {
   Query: {
     messages: async (
-      _: any,
+      _: Event,
       { limit }: { limit: number },
       { prisma }: GraphQLContext
     ) => {
@@ -46,7 +46,7 @@ export const resolvers: any = {
   },
 
   Mutation: {
-    sendMessage: async (_: any, args: Message, context: GraphQLContext) => {
+    sendMessage: async (_: Event, args: Message, context: GraphQLContext) => {
       const { prisma, pubsub } = context;
       const message = await prisma.message.create({ data: args });
       await pubsub.publish(MESSAGE_SENT, { messageSent: message });
@@ -56,7 +56,7 @@ export const resolvers: any = {
 
   Subscription: {
     messageSent: {
-      subscribe: (_: any, __: any, { pubsub }: GraphQLContext) =>
+      subscribe: (_: Event, __: Event, { pubsub }: GraphQLContext) =>
         pubsub.asyncIterator([MESSAGE_SENT]),
     },
   },
